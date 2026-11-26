@@ -1,0 +1,2674 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="handbook">
+  <title>中一多項式：同類項合併與拆括號互動工作坊（工作紙 25.11）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Public+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Handbook Style Core Tokens */
+      --background: #ffffff;
+      --surface-container-low: #f3f2f1;
+      --surface-container: #e8e7e5;
+      --surface-container-high: #dbdad9;
+
+      --on-surface: #0b0c0c;
+      --on-surface-variant: #505a5f;
+
+      --outline: #0b0c0c;
+      --outline-variant: #b1b4b6;
+
+      --primary: #162e51;
+      --on-primary: #ffffff;
+      --primary-container: #d2e2f1;
+      --on-primary-container: #0c2d4a;
+      --secondary: #4c2c92;
+      --tertiary: #1a569e;
+      --error: #b42318;
+      --on-error: #ffffff;
+
+      /* Data & Term Group Semantic Palette */
+      --data-1: #1a569e;
+      --data-2: #146c43;
+      --data-3: #4c2c92;
+      --data-4: #9a3412;
+      --data-context: #b1b4b6;
+
+      /* Algebra Tile Tokens (Color-coded positive/negative/x^2) */
+      --tile-pos-bg: #146c43;
+      --tile-pos-border: #0b4429;
+      --tile-pos-fg: #ffffff;
+
+      --tile-var2-pos-bg: #0f766e;
+      --tile-var2-pos-border: #094944;
+
+      --tile-neg-bg: #b42318;
+      --tile-neg-border: #7a150e;
+      --tile-neg-fg: #ffffff;
+
+      --tile-x2-pos-bg: #1a569e;
+      --tile-x2-pos-border: #0e3463;
+      --tile-x2-neg-bg: #9f1239;
+      --tile-x2-neg-border: #1a569e;
+
+      /* Term Grouping Soft Tint Tokens */
+      --group-x2-bg: #e8f1fb;
+      --group-x2-border: #1a569e;
+      --group-v1-bg: #e6f4ec;
+      --group-v1-border: #146c43;
+      --group-v2-bg: #f1ecfb;
+      --group-v2-border: #4c2c92;
+      --group-const-bg: #fff2e6;
+      --group-const-border: #9a3412;
+
+      /* Semantic Status Tokens */
+      --positive: #146c43;
+      --positive-bg: #e6f4ec;
+      --warning: #9a3412;
+      --warning-bg: #fff2e6;
+      --error-bg: #fdecec;
+      --focus: #162e51;
+
+      /* Fonts */
+      --font-headline: 'Noto Sans TC', 'Public Sans', sans-serif;
+      --font-body: 'Noto Sans TC', 'Public Sans', sans-serif;
+      --font-label: 'Noto Sans TC', 'Public Sans', sans-serif;
+      --font-math: 'Public Sans', 'Noto Sans TC', sans-serif;
+
+      /* Shape (Handbook strict square corners) */
+      --rounded: 0;
+      --rounded-lg: 0;
+      --rounded-full: 0;
+
+      /* Style Effects */
+      --top-index-rule: 6px solid var(--primary);
+      --inset-rule: 5px solid var(--tertiary);
+      --inset-rule-pos: 5px solid var(--positive);
+      --inset-rule-err: 5px solid var(--error);
+      --inset-rule-warn: 5px solid var(--warning);
+      --button-ground: 0 2px 0 #091526;
+      --button-ground-secondary: 0 2px 0 #858686;
+      --focus-yellow: #ffdd00;
+      --focus-ring: 3px solid var(--focus-yellow);
+      --focus-bar: inset 0 0 0 2px var(--on-surface);
+      --focus-underline: 0 -2px var(--focus-yellow), 0 4px var(--on-surface);
+
+      /* Type Scale (Tool Form) */
+      --display-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.25rem);
+      --headline-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem);
+      --subhead-size: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+      --body-size: clamp(0.9375rem, 0.9rem + 0.15vw, 1rem);
+      --label-size: 0.75rem;
+
+      /* Spacing Scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base Reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    header { position: static !important; }
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1180px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus Accessibility (Handbook Yellow Focus) */
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 0;
+      box-shadow: var(--focus-bar);
+    }
+    a:focus-visible {
+      outline: none;
+      background: var(--focus-yellow);
+      color: var(--on-surface);
+      text-decoration: none;
+      box-shadow: var(--focus-underline);
+    }
+
+    /* Header & Index Rule */
+    .index-header {
+      border-top: var(--top-index-rule);
+      border-bottom: 1px solid var(--on-surface);
+      padding: var(--space-sm) 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm) var(--space-md);
+    }
+    .index-brand {
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .index-nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-md);
+    }
+    .index-nav a {
+      color: var(--tertiary);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .index-nav a:hover {
+      text-decoration-thickness: 3px;
+    }
+
+    .hero-block {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+      padding-top: var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-lg);
+    }
+    h1 {
+      font-family: var(--font-headline);
+      font-size: var(--display-size);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 0 var(--space-sm) 0;
+      color: var(--on-surface);
+    }
+    .lede {
+      margin: 0;
+      color: var(--on-surface-variant);
+      max-width: 65ch;
+      line-height: 1.6;
+    }
+
+    /* Progress Summary Inset Panel */
+    .progress-panel {
+      border-left: var(--inset-rule);
+      background: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+    .progress-label {
+      font-size: var(--label-size);
+      font-weight: 700;
+      color: var(--on-surface-variant);
+    }
+    .progress-figure {
+      font-family: var(--font-math);
+      font-size: var(--headline-size);
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+    .progress-bar-track {
+      width: 100%;
+      height: 10px;
+      background: var(--surface-container-high);
+      border: 1px solid var(--outline-variant);
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--positive);
+      transition: width var(--dur-short) var(--ease-out);
+    }
+    .progress-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      margin-top: var(--space-xs);
+    }
+
+    /* Legend Strip */
+    .legend-strip {
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+      border-left: var(--inset-rule);
+      padding: var(--space-md) var(--space-lg);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .legend-title {
+      font-weight: 700;
+      font-size: var(--body-size);
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md) var(--space-lg);
+      align-items: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-size: 0.875rem;
+    }
+
+    /* Section Headings */
+    .section-block {
+      display: grid;
+      gap: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 2px solid var(--on-surface);
+    }
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 30px;
+      height: 30px;
+      padding: 0 var(--space-xs);
+      background: var(--primary);
+      color: var(--on-primary);
+      font-weight: 800;
+      font-size: 0.875rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    h2 {
+      font-family: var(--font-headline);
+      font-size: var(--headline-size);
+      font-weight: 800;
+      margin: 0;
+      line-height: 1.25;
+    }
+    .section-sub {
+      margin: var(--space-xs) 0 0 0;
+      color: var(--on-surface-variant);
+      max-width: 65ch;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      font-weight: 700;
+      font-size: var(--label-size);
+      white-space: nowrap;
+    }
+
+    /* Buttons (Handbook Grounded Action Buttons) */
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 700;
+      font-size: 0.9375rem;
+      line-height: 1.2;
+      background: var(--primary);
+      color: var(--on-primary);
+      border: 0;
+      border-radius: var(--rounded);
+      box-shadow: var(--button-ground);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+    .button:hover:not(:disabled) {
+      background: var(--tertiary);
+    }
+    .button:active:not(:disabled) {
+      transform: translateY(2px);
+      box-shadow: none;
+    }
+    .button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .button--secondary {
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      border: 1px solid var(--outline-variant);
+      box-shadow: var(--button-ground-secondary);
+    }
+    .button--secondary:hover:not(:disabled) {
+      background: var(--surface-container);
+    }
+    .button--secondary.is-active {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--tertiary);
+      box-shadow: 0 2px 0 var(--tertiary);
+    }
+
+    .button--pos {
+      background: var(--tile-pos-bg);
+      color: var(--tile-pos-fg);
+      box-shadow: 0 2px 0 var(--tile-pos-border);
+    }
+    .button--pos:hover:not(:disabled) {
+      background: var(--tile-pos-border);
+    }
+
+    .button--neg {
+      background: var(--tile-neg-bg);
+      color: var(--tile-neg-fg);
+      box-shadow: 0 2px 0 var(--tile-neg-border);
+    }
+    .button--neg:hover:not(:disabled) {
+      background: var(--tile-neg-border);
+    }
+
+    .button--sm {
+      min-height: 36px;
+      padding: var(--space-xs) var(--space-sm);
+      font-size: 0.875rem;
+    }
+
+    /* Part & Question Selectors */
+    .part-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-md);
+    }
+    .question-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+    .q-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      min-height: 44px;
+      padding: var(--space-xs) var(--space-md);
+      background: var(--background);
+      color: var(--on-surface);
+      border: 2px solid var(--outline-variant);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+    }
+    .q-btn:hover {
+      background: var(--surface-container-low);
+      border-color: var(--on-surface);
+    }
+    .q-btn.is-current {
+      background: var(--primary);
+      color: var(--on-primary);
+      border-color: var(--primary);
+    }
+    .q-btn.is-solved:not(.is-current) {
+      background: var(--positive-bg);
+      border-color: var(--positive);
+      color: var(--positive);
+    }
+    .q-done-mark {
+      font-weight: 800;
+    }
+
+    /* Workspace Container */
+    .workspace-wrap {
+      container-type: inline-size;
+      border: 2px solid var(--on-surface);
+      background: var(--background);
+      padding: var(--space-lg);
+      display: grid;
+      gap: var(--space-lg);
+    }
+    .workspace-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+      padding-bottom: var(--space-md);
+    }
+    .worksheet-ref {
+      font-size: var(--label-size);
+      font-weight: 700;
+      color: var(--on-surface-variant);
+      display: block;
+      margin-bottom: var(--space-xs);
+    }
+    .expr-display {
+      font-family: var(--font-math);
+      font-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.875rem);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Color-Coded Math Term Tokens */
+    .term-chip {
+      display: inline-flex;
+      align-items: baseline;
+      padding: 2px 6px;
+      border-bottom: 3px solid transparent;
+      font-variant-numeric: tabular-nums;
+    }
+    .term-chip--x2 {
+      background: var(--group-x2-bg);
+      border-bottom-color: var(--group-x2-border);
+      color: var(--on-surface);
+    }
+    .term-chip--v1 {
+      background: var(--group-v1-bg);
+      border-bottom-color: var(--group-v1-border);
+      color: var(--on-surface);
+    }
+    .term-chip--v2 {
+      background: var(--group-v2-bg);
+      border-bottom-color: var(--group-v2-border);
+      color: var(--on-surface);
+    }
+    .term-chip--const {
+      background: var(--group-const-bg);
+      border-bottom-color: var(--group-const-border);
+      color: var(--on-surface);
+    }
+    .term-chip--neg {
+      color: var(--error);
+    }
+
+    /* Step Blocks inside Workspace */
+    .step-panel {
+      background: var(--surface-container-low);
+      border-left: var(--inset-rule);
+      padding: var(--space-md) var(--space-lg);
+      display: grid;
+      gap: var(--space-md);
+    }
+    .step-panel--pos { border-left-color: var(--positive); }
+    .step-panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .step-panel-title {
+      font-weight: 800;
+      font-size: var(--subhead-size);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Algebra Tiles Rendering */
+    .tile-stage {
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      padding: var(--space-md);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-md);
+      min-height: 96px;
+    }
+    .tile-group-box {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      padding: var(--space-sm) var(--space-md);
+      border: 2px solid var(--outline-variant);
+      background: var(--background);
+      min-width: 140px;
+    }
+    .tile-group-box--x2 { border-color: var(--group-x2-border); background: var(--group-x2-bg); }
+    .tile-group-box--v1 { border-color: var(--group-v1-border); background: var(--group-v1-bg); }
+    .tile-group-box--v2 { border-color: var(--group-v2-border); background: var(--group-v2-bg); }
+    .tile-group-box--const { border-color: var(--group-const-border); background: var(--group-const-bg); }
+
+    .tile-group-label {
+      font-size: var(--label-size);
+      font-weight: 700;
+      color: var(--on-surface);
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-sm);
+    }
+    .tile-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Individual Algebra Tile Shapes */
+    .alg-tile {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-math);
+      font-weight: 800;
+      font-size: 0.875rem;
+      user-select: none;
+      position: relative;
+      transition: transform var(--dur-long) var(--ease-out), opacity var(--dur-short) var(--ease-out);
+    }
+    .alg-tile--x2 {
+      width: 58px;
+      height: 58px;
+    }
+    .alg-tile--v1 {
+      width: 58px;
+      height: 28px;
+    }
+    .alg-tile--v2 {
+      width: 28px;
+      height: 58px;
+    }
+    .alg-tile--const {
+      width: 28px;
+      height: 28px;
+      font-size: 0.8125rem;
+    }
+
+    /* Mini legend tiles */
+    .alg-tile--mini.alg-tile--x2 { width: 34px; height: 34px; font-size: 0.75rem; }
+    .alg-tile--mini.alg-tile--v1 { width: 38px; height: 22px; font-size: 0.75rem; }
+    .alg-tile--mini.alg-tile--v2 { width: 22px; height: 38px; font-size: 0.75rem; }
+    .alg-tile--mini.alg-tile--const { width: 22px; height: 22px; font-size: 0.7rem; }
+
+    .alg-tile--pos {
+      background: var(--tile-pos-bg);
+      color: var(--tile-pos-fg);
+      border: 2px solid var(--tile-pos-border);
+    }
+    .alg-tile--v2-pos {
+      background: var(--tile-var2-pos-bg);
+      color: var(--tile-pos-fg);
+      border: 2px solid var(--tile-var2-pos-border);
+    }
+    .alg-tile--neg {
+      background: var(--tile-neg-bg);
+      color: var(--tile-neg-fg);
+      border: 2px solid var(--tile-neg-border);
+    }
+    .alg-tile--x2.alg-tile--pos {
+      background: var(--tile-x2-pos-bg);
+      color: var(--tile-pos-fg);
+      border: 2px solid var(--tile-x2-pos-border);
+    }
+    .alg-tile--x2.alg-tile--neg {
+      background: var(--tile-x2-neg-bg);
+      color: var(--tile-neg-fg);
+      border: 3px dashed var(--tile-x2-neg-border);
+    }
+
+    .alg-tile--flipped {
+      animation: tileFlip var(--dur-long) var(--ease-out);
+    }
+    @keyframes tileFlip {
+      0% { transform: rotateX(0deg) scale(1); }
+      45% { transform: rotateX(90deg) scale(0.92); }
+      100% { transform: rotateX(0deg) scale(1); }
+    }
+
+    /* Zero Pair Container */
+    .zero-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px;
+      border: 2px dashed var(--outline-variant);
+      background: var(--surface-container-low);
+      opacity: 0.55;
+    }
+    .zero-pair-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--on-surface-variant);
+      padding: 0 3px;
+    }
+
+    /* Bracket Visual Boxes for Section 2 */
+    .bracket-stage {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: var(--space-md);
+    }
+    .bracket-card {
+      flex: 1 1 260px;
+      border: 2px solid var(--on-surface);
+      background: var(--background);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+      align-content: start;
+    }
+    .bracket-card--neg {
+      border-color: var(--error);
+    }
+    .bracket-card--pos {
+      border-color: var(--positive);
+    }
+    .bracket-card--done {
+      background: var(--surface-container-low);
+      border-style: dashed;
+    }
+    .bracket-sign-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 800;
+    }
+    .bracket-expr-line {
+      font-family: var(--font-math);
+      font-size: 1.25rem;
+      font-weight: 800;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container-low);
+      border: 1px solid var(--outline-variant);
+    }
+
+    /* Form Controls & Answer Checking */
+    .answer-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: var(--space-md);
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      flex: 1 1 260px;
+    }
+    .field-label {
+      font-weight: 700;
+      font-size: 0.9375rem;
+      color: var(--on-surface);
+    }
+    .field-hint {
+      font-size: 0.8125rem;
+      color: var(--on-surface-variant);
+    }
+    .text-input, .select-input {
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      border: 2px solid var(--outline);
+      border-radius: var(--rounded);
+      background: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-math);
+      font-weight: 700;
+      font-size: 1.0625rem;
+    }
+    .select-input {
+      font-family: var(--font-body);
+      font-weight: 600;
+      padding-right: var(--space-xl);
+    }
+    .quick-keys {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      align-items: center;
+    }
+    .key-btn {
+      min-height: 36px;
+      min-width: 44px;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--background);
+      color: var(--on-surface);
+      border: 1px solid var(--outline);
+      font-family: var(--font-math);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .key-btn:hover {
+      background: var(--primary-container);
+    }
+
+    /* Feedback Banners */
+    .feedback-box {
+      padding: var(--space-sm) var(--space-md);
+      font-weight: 700;
+      border-left: var(--inset-rule);
+      background: var(--surface-container-low);
+      display: none;
+    }
+    .feedback-box.is-visible { display: block; }
+    .feedback-box--ok {
+      border-left: var(--inset-rule-pos);
+      background: var(--positive-bg);
+      color: var(--positive);
+    }
+    .feedback-box--err {
+      border-left: var(--inset-rule-err);
+      background: var(--error-bg);
+      color: var(--error);
+    }
+    .feedback-box--info {
+      border-left: var(--inset-rule);
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+
+    /* Two-Rule Comparison Grid */
+    .rule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .rule-card {
+      border-left: var(--inset-rule-pos);
+      background: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .rule-card--neg {
+      border-left: var(--inset-rule-err);
+    }
+    .rule-card h3 {
+      margin: 0;
+      font-size: var(--subhead-size);
+      font-weight: 800;
+    }
+    .rule-example {
+      font-family: var(--font-math);
+      font-weight: 800;
+      font-size: 1.0625rem;
+      background: var(--background);
+      border: 1px solid var(--outline-variant);
+      padding: var(--space-xs) var(--space-sm);
+      display: inline-block;
+    }
+
+    /* Generator Controls Grid */
+    .gen-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+      align-items: end;
+      background: var(--surface-container-low);
+      padding: var(--space-md) var(--space-lg);
+      border-left: var(--inset-rule);
+    }
+
+    /* Grouping Grid inside Section 1 */
+    .grouping-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+
+    /* Footer */
+    .page-footer {
+      border-top: 1px solid var(--outline-variant);
+      padding-top: var(--space-md);
+      padding-bottom: var(--space-xl);
+      color: var(--on-surface-variant);
+      font-size: 0.875rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    @container (max-width: 560px) {
+      .workspace-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .answer-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .hero-block {
+        grid-template-columns: 1fr;
+      }
+      .workspace-wrap {
+        padding: var(--space-md);
+      }
+      .alg-tile--x2 { width: 48px; height: 48px; }
+      .alg-tile--v1 { width: 48px; height: 24px; }
+      .alg-tile--v2 { width: 24px; height: 48px; }
+      .alg-tile--const { width: 24px; height: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+    <!-- Top Index Header -->
+    <header class="index-header">
+      <div class="index-brand">
+        <span>中一數學科｜多項式加減與同類項合併（配合練習 25.11）</span>
+      </div>
+      <nav class="index-nav" aria-label="章節快速跳轉">
+        <a href="#section-1">一、同類項合併（25.11）</a>
+        <a href="#section-2">二、拆括號與翻牌變號</a>
+        <a href="#section-3">三、隨機題目生成器</a>
+      </nav>
+    </header>
+
+    <!-- Title & Progress Block -->
+    <section class="hero-block" aria-labelledby="app-title">
+      <div>
+        <h1 id="app-title">中一多項式：同類項合併與拆括號互動工作坊</h1>
+        <p class="lede">
+          配合課本練習 <strong>25.11</strong> 與課堂工作紙設計。先透過代數磚分辨二次項（x²）、一次項與常數項的正負顏色，再進行零對相消與同類項分組；進階部分專注掌握「正號不變、負號翻牌變號」兩大拆括號核心步驟。
+        </p>
+      </div>
+      <aside class="progress-panel" aria-label="工作紙完成進度">
+        <span class="progress-label">課堂固定練習完成進度（共 17 題）</span>
+        <div class="progress-figure" id="overall-progress-text">0 / 17 題</div>
+        <div class="progress-bar-track" aria-hidden="true">
+          <div class="progress-bar-fill" id="overall-progress-bar"></div>
+        </div>
+        <div class="progress-actions">
+          <span class="field-hint" id="random-count-text">隨機練習已完成：0 題</span>
+          <button type="button" class="button button--secondary button--sm" id="reset-progress-btn" onclick="handleResetProgress(this)">重置進度</button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Algebra Tiles & Color Coding Legend -->
+    <section class="legend-strip" aria-label="代數磚顏色與形狀圖例">
+      <div class="legend-title">
+        <span>代數磚顏色與形狀圖例（同類項分組對照）</span>
+        <span class="status-tag">零對（Zero Pair）：同形狀一正一負配對 = 0</span>
+      </div>
+      <div class="legend-items">
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--x2 alg-tile--pos alg-tile--mini" aria-hidden="true">+x²</span>
+          <span>藍色大正方形：正二次項（+x²）</span>
+        </div>
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--x2 alg-tile--neg alg-tile--mini" aria-hidden="true">-x²</span>
+          <span>紅色大正方形（藍虛線框）：負二次項（-x²）</span>
+        </div>
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--v1 alg-tile--pos alg-tile--mini" aria-hidden="true">+x</span>
+          <span>綠色長條：正一次項（如 +x、+a、+m）</span>
+        </div>
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--v1 alg-tile--neg alg-tile--mini" aria-hidden="true">-x</span>
+          <span>紅色長條：負一次項（如 -x、-a、-m）</span>
+        </div>
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--v2 alg-tile--v2-pos alg-tile--mini" aria-hidden="true">+n</span>
+          <span>青綠直條：第二個未知數（如 +n、+k）</span>
+        </div>
+        <div class="legend-item">
+          <span class="alg-tile alg-tile--const alg-tile--pos alg-tile--mini" aria-hidden="true">+1</span>
+          <span class="alg-tile alg-tile--const alg-tile--neg alg-tile--mini" aria-hidden="true">-1</span>
+          <span>小方塊：常數項（綠 +1 ／ 紅 -1）</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: Basic Like Terms Simplification (25.11) -->
+    <section class="section-block" id="section-1" aria-labelledby="sec1-heading">
+      <div class="section-head">
+        <div class="section-title-wrap">
+          <span class="step-badge">一</span>
+          <div>
+            <h2 id="sec1-heading">同類項合併 — 基礎練習（配合練習 25.11）</h2>
+            <p class="section-sub">
+              依課本練習 25.11 分為三個進階組別。觀察每一項連同前面的正負號，利用代數磚配對零對並分組化簡。
+            </p>
+          </div>
+        </div>
+        <span class="status-tag" id="sec1-progress-tag">已完成 0 / 12 題</span>
+      </div>
+
+      <!-- Part Switcher -->
+      <div class="part-tabs" role="tablist" aria-label="練習 25.11 組別選擇">
+        <button type="button" role="tab" class="button button--secondary is-active" id="part-tab-0" onclick="selectSec1Part(0)">第一組：單一未知數加減</button>
+        <button type="button" role="tab" class="button button--secondary" id="part-tab-1" onclick="selectSec1Part(1)">第二組：雙未知數分組合併</button>
+        <button type="button" role="tab" class="button button--secondary" id="part-tab-2" onclick="selectSec1Part(2)">第三組：二次項與常數項</button>
+      </div>
+
+      <!-- Question Selector Strip -->
+      <div class="question-strip" id="sec1-question-strip" aria-label="選擇題號"></div>
+
+      <!-- Section 1 Interactive Workspace -->
+      <div class="workspace-wrap" id="sec1-workspace">
+        <div class="workspace-header">
+          <div>
+            <span class="worksheet-ref" id="sec1-ref-label">工作紙 25.11・第一組・題 1</span>
+            <div class="expr-display" id="sec1-expr-display" aria-live="polite"></div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+            <button type="button" class="button button--secondary button--sm" id="sec1-demo-btn" onclick="revealSec1AllSteps()">課堂示範：顯示步驟解答</button>
+          </div>
+        </div>
+
+        <!-- Step 1: Algebra Tile Representation -->
+        <div class="step-panel">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">1</span>
+              <span>步驟 1：展開代數磚與零對相消（Zero Pairs）</span>
+            </h3>
+            <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+              <button type="button" class="button button--secondary button--sm" id="sec1-pair-btn" onclick="toggleSec1ZeroPairs()">配對零對相消 (= 0)</button>
+            </div>
+          </div>
+          <div class="tile-stage" id="sec1-tile-stage" aria-live="polite"></div>
+          <div class="field-hint" id="sec1-tile-hint">提示：不同形狀（例如 x² 與 x，或 m 與 n）不是同類項，不能互相抵消或合併。</div>
+        </div>
+
+        <!-- Step 2: Term Grouping Visualization -->
+        <div class="step-panel">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">2</span>
+              <span>步驟 2：同類項分組視覺化</span>
+            </h3>
+            <button type="button" class="button button--secondary button--sm" id="sec1-group-btn" onclick="toggleSec1Grouping()">展開／隱藏同類項分組</button>
+          </div>
+          <div id="sec1-grouping-area" style="display:none;">
+            <div class="grouping-grid" id="sec1-grouping-grid"></div>
+          </div>
+          <div class="field-hint" id="sec1-grouping-placeholder">點擊右上方「展開／隱藏同類項分組」，將相同種類的項連同正負號歸入同一色塊中計算。</div>
+        </div>
+
+        <!-- Step 3: Check Simplified Answer -->
+        <div class="step-panel step-panel--pos">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">3</span>
+              <span>步驟 3：填寫並核對化簡結果</span>
+            </h3>
+          </div>
+          <div class="answer-row">
+            <div class="field-group">
+              <label class="field-label" for="sec1-answer-input">化簡後的多項式結果</label>
+              <input type="text" id="sec1-answer-input" class="text-input" autocomplete="off" onkeydown="if(event.key==='Enter') checkSec1Answer()">
+              <span class="field-hint">可按下方快捷鍵輸入 x²、+、-，省略係數 1（例如 1x 寫作 x，-1x² 寫作 -x²）。</span>
+            </div>
+            <button type="button" class="button" onclick="checkSec1Answer()">核對答案</button>
+          </div>
+          <div class="quick-keys" id="sec1-quick-keys" aria-label="數學符號快捷輸入">
+            <span class="field-hint">快捷插入：</span>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', 'x²')">x²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', '²')">²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', ' + ')">+</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', ' - ')">-</button>
+          </div>
+          <div class="feedback-box" id="sec1-feedback" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Bracket Removal with Algebra Tiles (ONLY 2 Core Rules) -->
+    <section class="section-block" id="section-2" aria-labelledby="sec2-heading">
+      <div class="section-head">
+        <div class="section-title-wrap">
+          <span class="step-badge">二</span>
+          <div>
+            <h2 id="sec2-heading">拆括號與多項式加減（代數磚翻牌變號）</h2>
+            <p class="section-sub">
+              拆括號只需掌握兩條核心法則。觀察括號前面的符號，決定「保留原號」或「全體翻牌變號」，再合併同類項。
+            </p>
+          </div>
+        </div>
+        <span class="status-tag" id="sec2-progress-tag">已完成 0 / 5 題</span>
+      </div>
+
+      <!-- ONLY 2 Core Bracket Removal Rules -->
+      <div class="rule-grid" aria-label="兩大核心拆括號法則">
+        <div class="rule-card">
+          <h3>法則 1：正號拆括號 +(…) → 保留原號</h3>
+          <p class="lede" style="font-size:0.9375rem;">括號前面是 <strong>+</strong> 號（或算式最前面的無號括號），拆開括號時裡面每一項的符號<strong>完全不變</strong>。</p>
+          <div><span class="rule-example">+(2x - 3) = 2x - 3</span></div>
+        </div>
+        <div class="rule-card rule-card--neg">
+          <h3>法則 2：負號拆括號 -(…) → 翻牌變號</h3>
+          <p class="lede" style="font-size:0.9375rem;">括號前面是 <strong>-</strong> 號時，拆開括號後裡面每一項都要<strong>正變負、負變正</strong>（代數磚綠紅互翻）。</p>
+          <div><span class="rule-example">-(3x - 5) = -3x + 5</span></div>
+        </div>
+      </div>
+
+      <!-- 5 Fixed Guided Questions Strip -->
+      <div class="question-strip" id="sec2-question-strip" aria-label="選擇題目 1 至 5"></div>
+
+      <!-- Section 2 Interactive Workspace -->
+      <div class="workspace-wrap" id="sec2-workspace">
+        <div class="workspace-header">
+          <div>
+            <span class="worksheet-ref" id="sec2-ref-label">工作紙進階練習・題目 1</span>
+            <div class="expr-display" id="sec2-expr-display" aria-live="polite"></div>
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:var(--space-sm);">
+            <button type="button" class="button button--secondary button--sm" onclick="resetSec2Current()">重新操作本題</button>
+            <button type="button" class="button button--secondary button--sm" onclick="revealSec2AllSteps()">課堂示範：顯示步驟解答</button>
+          </div>
+        </div>
+
+        <!-- Step 1: Bracket Removal with 2 Core Buttons -->
+        <div class="step-panel">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">1</span>
+              <span>步驟 1：點擊拆括號按鈕（執行正號保留／負號翻牌）</span>
+            </h3>
+            <span class="status-tag" id="sec2-bracket-status">等待拆括號</span>
+          </div>
+          <div class="bracket-stage" id="sec2-bracket-stage"></div>
+
+          <div class="answer-row">
+            <div class="field-group">
+              <label class="field-label" for="sec2-step1-input">核對拆括號後的展開算式（先不要合併同類項）</label>
+              <input type="text" id="sec2-step1-input" class="text-input" autocomplete="off" onkeydown="if(event.key==='Enter') checkSec2Step1()">
+              <span class="field-hint">範例格式：拆開 (3x² + 4x) - (2x² - 5x) 後寫成 3x² + 4x - 2x² + 5x</span>
+            </div>
+            <button type="button" class="button button--secondary" onclick="checkSec2Step1()">核對拆括號</button>
+          </div>
+          <div class="quick-keys" aria-label="步驟一符號快捷輸入">
+            <span class="field-hint">快捷插入：</span>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-step1-input', 'x²')">x²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-step1-input', '²')">²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-step1-input', ' + ')">+</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-step1-input', ' - ')">-</button>
+          </div>
+          <div class="feedback-box" id="sec2-step1-feedback" role="status" aria-live="polite"></div>
+        </div>
+
+        <!-- Step 2: Merge Like Terms & Final Answer -->
+        <div class="step-panel step-panel--pos">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">2</span>
+              <span>步驟 2：代數磚分組與核對最終簡化答案</span>
+            </h3>
+            <button type="button" class="button button--secondary button--sm" id="sec2-merge-btn" onclick="toggleSec2Merge()">合併同類項並消除零對</button>
+          </div>
+          <div class="tile-stage" id="sec2-merged-tiles" aria-live="polite"></div>
+          <div class="answer-row">
+            <div class="field-group">
+              <label class="field-label" for="sec2-final-input">最終簡化結果</label>
+              <input type="text" id="sec2-final-input" class="text-input" autocomplete="off" onkeydown="if(event.key==='Enter') checkSec2Final()">
+              <span class="field-hint">將同類項合併後寫出最簡多項式（例如 x² + 9x）。</span>
+            </div>
+            <button type="button" class="button" onclick="checkSec2Final()">核對最終答案</button>
+          </div>
+          <div class="quick-keys" aria-label="步驟二符號快捷輸入">
+            <span class="field-hint">快捷插入：</span>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-final-input', 'x²')">x²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-final-input', '²')">²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-final-input', ' + ')">+</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec2-final-input', ' - ')">-</button>
+          </div>
+          <div class="feedback-box" id="sec2-final-feedback" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Random Question Generator -->
+    <section class="section-block" id="section-3" aria-labelledby="sec3-heading">
+      <div class="section-head">
+        <div class="section-title-wrap">
+          <span class="step-badge">三</span>
+          <div>
+            <h2 id="sec3-heading">隨機題目生成器（課後延伸練習）</h2>
+            <p class="section-sub">
+              自選題型與難度，即時生成全新多項式拆括號題目，同樣搭配「正號保留／負號翻牌」代數磚動畫與分步核對。
+            </p>
+          </div>
+        </div>
+        <span class="status-tag" id="sec3-streak-tag">本次隨機答對：0 題</span>
+      </div>
+
+      <!-- Generator Controls -->
+      <div class="gen-controls">
+        <div class="field-group">
+          <label class="field-label" for="gen-mode-select">選擇練習題型</label>
+          <select id="gen-mode-select" class="select-input">
+            <option value="mixed">雙多項式加減混合 ( ) ± ( )</option>
+            <option value="pos">僅正號拆括號 +(…)</option>
+            <option value="neg">僅負號拆括號 -(…)</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="gen-level-select">選擇項數與難度</label>
+          <select id="gen-level-select" class="select-input">
+            <option value="quad">標準：含 x² 二次項與一次項</option>
+            <option value="linear">基礎：一次項 x 與常數項</option>
+            <option value="full">挑戰：x²、x 與常數項全齊</option>
+          </select>
+        </div>
+        <button type="button" class="button" onclick="generateRandomQuestion()">產生新隨機題目</button>
+      </div>
+
+      <!-- Random Question Interactive Workspace -->
+      <div class="workspace-wrap" id="sec3-workspace">
+        <div class="workspace-header">
+          <div>
+            <span class="worksheet-ref" id="sec3-ref-label">隨機練習題 #1</span>
+            <div class="expr-display" id="sec3-expr-display" aria-live="polite"></div>
+          </div>
+          <button type="button" class="button button--secondary button--sm" onclick="revealSec3AllSteps()">顯示本題解答</button>
+        </div>
+
+        <div class="step-panel">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">1</span>
+              <span>步驟 1：執行拆括號並核對展開式</span>
+            </h3>
+            <span class="status-tag" id="sec3-bracket-status">等待拆括號</span>
+          </div>
+          <div class="bracket-stage" id="sec3-bracket-stage"></div>
+
+          <div class="answer-row">
+            <div class="field-group">
+              <label class="field-label" for="sec3-step1-input">拆括號後的算式（尚未合併）</label>
+              <input type="text" id="sec3-step1-input" class="text-input" autocomplete="off" onkeydown="if(event.key==='Enter') checkSec3Step1()">
+            </div>
+            <button type="button" class="button button--secondary" onclick="checkSec3Step1()">核對拆括號</button>
+          </div>
+          <div class="quick-keys">
+            <span class="field-hint">快捷插入：</span>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-step1-input', 'x²')">x²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-step1-input', '²')">²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-step1-input', ' + ')">+</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-step1-input', ' - ')">-</button>
+          </div>
+          <div class="feedback-box" id="sec3-step1-feedback" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="step-panel step-panel--pos">
+          <div class="step-panel-head">
+            <h3 class="step-panel-title">
+              <span class="step-badge">2</span>
+              <span>步驟 2：代數磚合併與核對最終結果</span>
+            </h3>
+            <button type="button" class="button button--secondary button--sm" id="sec3-merge-btn" onclick="toggleSec3Merge()">合併同類項並消除零對</button>
+          </div>
+          <div class="tile-stage" id="sec3-merged-tiles" aria-live="polite"></div>
+          <div class="answer-row">
+            <div class="field-group">
+              <label class="field-label" for="sec3-final-input">最終簡化結果</label>
+              <input type="text" id="sec3-final-input" class="text-input" autocomplete="off" onkeydown="if(event.key==='Enter') checkSec3Final()">
+            </div>
+            <button type="button" class="button" onclick="checkSec3Final()">核對最終答案</button>
+          </div>
+          <div class="quick-keys">
+            <span class="field-hint">快捷插入：</span>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-final-input', 'x²')">x²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-final-input', '²')">²</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-final-input', ' + ')">+</button>
+            <button type="button" class="key-btn" onclick="insertSymbol('sec3-final-input', ' - ')">-</button>
+          </div>
+          <div class="feedback-box" id="sec3-final-feedback" role="status" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>中一數學課堂互動教學工具｜對應課本練習 25.11 與拆括號工作紙</span>
+      <span>建議作答流程：看清符號 → 拆括號（正保留／負翻牌）→ 分組合併同類項</span>
+    </footer>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    /* =========================================================
+       1. Curriculum Data (Worksheet 25.11 & 5 Guided Questions)
+       ========================================================= */
+    const SEC1_PARTS = [
+      {
+        id: `part1`,
+        title: `第一組：單一未知數加減`,
+        questions: [
+          {
+            id: `1-1`,
+            label: `題 1.1`,
+            ref: `工作紙 25.11・第一組 題 1`,
+            terms: [
+              { coeff: 7, variable: `a`, power: 1 },
+              { coeff: -4, variable: `a`, power: 1 },
+              { coeff: 3, variable: `a`, power: 1 }
+            ]
+          },
+          {
+            id: `1-2`,
+            label: `題 1.2`,
+            ref: `工作紙 25.11・第一組 題 2`,
+            terms: [
+              { coeff: -2, variable: `b`, power: 1 },
+              { coeff: 9, variable: `b`, power: 1 },
+              { coeff: -6, variable: `b`, power: 1 }
+            ]
+          },
+          {
+            id: `1-3`,
+            label: `題 1.3`,
+            ref: `工作紙 25.11・第一組 題 3`,
+            terms: [
+              { coeff: 5, variable: `x`, power: 1 },
+              { coeff: -8, variable: `x`, power: 1 },
+              { coeff: 2, variable: `x`, power: 1 }
+            ]
+          },
+          {
+            id: `1-4`,
+            label: `題 1.4`,
+            ref: `工作紙 25.11・第一組 題 4`,
+            terms: [
+              { coeff: -4, variable: `y`, power: 1 },
+              { coeff: 7, variable: `y`, power: 1 },
+              { coeff: -3, variable: `y`, power: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `part2`,
+        title: `第二組：雙未知數分組合併`,
+        questions: [
+          {
+            id: `2-1`,
+            label: `題 2.1`,
+            ref: `工作紙 25.11・第二組 題 1`,
+            terms: [
+              { coeff: 5, variable: `m`, power: 1 },
+              { coeff: -3, variable: `n`, power: 1 },
+              { coeff: 2, variable: `m`, power: 1 }
+            ]
+          },
+          {
+            id: `2-2`,
+            label: `題 2.2`,
+            ref: `工作紙 25.11・第二組 題 2`,
+            terms: [
+              { coeff: 8, variable: `h`, power: 1 },
+              { coeff: 4, variable: `k`, power: 1 },
+              { coeff: -4, variable: `h`, power: 1 },
+              { coeff: 5, variable: `k`, power: 1 }
+            ]
+          },
+          {
+            id: `2-3`,
+            label: `題 2.3`,
+            ref: `工作紙 25.11・第二組 題 3`,
+            terms: [
+              { coeff: 6, variable: `p`, power: 1 },
+              { coeff: -2, variable: `q`, power: 1 },
+              { coeff: -9, variable: `p`, power: 1 },
+              { coeff: 5, variable: `q`, power: 1 }
+            ]
+          },
+          {
+            id: `2-4`,
+            label: `題 2.4`,
+            ref: `工作紙 25.11・第二組 題 4`,
+            terms: [
+              { coeff: -3, variable: `x`, power: 1 },
+              { coeff: 7, variable: `y`, power: 1 },
+              { coeff: 5, variable: `x`, power: 1 },
+              { coeff: -9, variable: `y`, power: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `part3`,
+        title: `第三組：二次項與常數項`,
+        questions: [
+          {
+            id: `3-1`,
+            label: `題 3.1`,
+            ref: `工作紙 25.11・第三組 題 1`,
+            terms: [
+              { coeff: 1, variable: ``, power: 0 },
+              { coeff: 1, variable: `x`, power: 2 },
+              { coeff: 3, variable: ``, power: 0 },
+              { coeff: -2, variable: `x`, power: 2 }
+            ]
+          },
+          {
+            id: `3-2`,
+            label: `題 3.2`,
+            ref: `工作紙 25.11・第三組 題 2`,
+            terms: [
+              { coeff: 3, variable: `x`, power: 2 },
+              { coeff: -4, variable: `x`, power: 1 },
+              { coeff: -2, variable: ``, power: 0 },
+              { coeff: 1, variable: `x`, power: 2 },
+              { coeff: -5, variable: ``, power: 0 }
+            ]
+          },
+          {
+            id: `3-3`,
+            label: `題 3.3`,
+            ref: `工作紙 25.11・第三組 題 3`,
+            terms: [
+              { coeff: 2, variable: `x`, power: 2 },
+              { coeff: 5, variable: `x`, power: 1 },
+              { coeff: -3, variable: ``, power: 0 },
+              { coeff: -4, variable: `x`, power: 2 },
+              { coeff: -2, variable: `x`, power: 1 },
+              { coeff: 6, variable: ``, power: 0 }
+            ]
+          },
+          {
+            id: `3-4`,
+            label: `題 3.4`,
+            ref: `工作紙 25.11・第三組 題 4`,
+            terms: [
+              { coeff: -1, variable: `x`, power: 2 },
+              { coeff: 3, variable: ``, power: 0 },
+              { coeff: -2, variable: `x`, power: 1 },
+              { coeff: 4, variable: `x`, power: 2 },
+              { coeff: -7, variable: ``, power: 0 },
+              { coeff: 2, variable: `x`, power: 1 }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const SEC2_QUESTIONS = [
+      {
+        id: `b-1`,
+        label: `題目 1`,
+        ref: `工作紙拆括號・題目 1（入門：正號拆括號）`,
+        brackets: [
+          {
+            sign: 1,
+            explicitSign: true,
+            terms: [
+              { coeff: 2, variable: `x`, power: 1 },
+              { coeff: 3, variable: ``, power: 0 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `b-2`,
+        label: `題目 2`,
+        ref: `工作紙拆括號・題目 2（核心：負號翻牌變號）`,
+        brackets: [
+          {
+            sign: -1,
+            explicitSign: true,
+            terms: [
+              { coeff: 3, variable: `x`, power: 1 },
+              { coeff: -5, variable: ``, power: 0 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `b-3`,
+        label: `題目 3`,
+        ref: `工作紙拆括號・題目 3（進階：多項式相加）`,
+        brackets: [
+          {
+            sign: 1,
+            explicitSign: false,
+            terms: [
+              { coeff: 4, variable: `x`, power: 2 },
+              { coeff: -2, variable: `x`, power: 1 }
+            ]
+          },
+          {
+            sign: 1,
+            explicitSign: true,
+            terms: [
+              { coeff: 1, variable: `x`, power: 2 },
+              { coeff: 5, variable: `x`, power: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `b-4`,
+        label: `題目 4`,
+        ref: `工作紙拆括號・題目 4（進階：二次多項式相減）`,
+        brackets: [
+          {
+            sign: 1,
+            explicitSign: false,
+            terms: [
+              { coeff: 3, variable: `x`, power: 2 },
+              { coeff: 4, variable: `x`, power: 1 }
+            ]
+          },
+          {
+            sign: -1,
+            explicitSign: true,
+            terms: [
+              { coeff: 2, variable: `x`, power: 2 },
+              { coeff: -5, variable: `x`, power: 1 }
+            ]
+          }
+        ]
+      },
+      {
+        id: `b-5`,
+        label: `題目 5`,
+        ref: `工作紙拆括號・題目 5（綜合挑戰：含常數項相減）`,
+        brackets: [
+          {
+            sign: 1,
+            explicitSign: false,
+            terms: [
+              { coeff: 2, variable: `x`, power: 2 },
+              { coeff: -3, variable: `x`, power: 1 },
+              { coeff: 4, variable: ``, power: 0 }
+            ]
+          },
+          {
+            sign: -1,
+            explicitSign: true,
+            terms: [
+              { coeff: 1, variable: `x`, power: 2 },
+              { coeff: -5, variable: `x`, power: 1 },
+              { coeff: 1, variable: ``, power: 0 }
+            ]
+          }
+        ]
+      }
+    ];
+
+    /* =========================================================
+       2. Application State
+       ========================================================= */
+    const appState = {
+      sec1PartIndex: 0,
+      sec1QIndex: 0,
+      sec1ShowZeroPairs: false,
+      sec1ShowGrouping: false,
+      sec1Solved: {},
+
+      sec2QIndex: 0,
+      sec2OpenedBrackets: [],
+      sec2FlippedIndices: [],
+      sec2Merged: false,
+      sec2Solved: {},
+
+      sec3Counter: 1,
+      sec3SolvedCount: 0,
+      sec3Question: null,
+      sec3OpenedBrackets: [],
+      sec3FlippedIndices: [],
+      sec3Merged: false
+    };
+
+    /* =========================================================
+       3. Math Formatting & Parsing Utilities
+       ========================================================= */
+    function getTermCategory(term, allTerms) {
+      if (term.power === 2) return `x2`;
+      if (term.power === 0) return `const`;
+      const vars = [];
+      for (let i = 0; i < allTerms.length; i++) {
+        const v = allTerms[i].variable;
+        if (allTerms[i].power === 1 && v && vars.indexOf(v) === -1) {
+          vars.push(v);
+        }
+      }
+      if (vars.length > 1 && term.variable === vars[1]) return `v2`;
+      return `v1`;
+    }
+
+    function formatSingleTermText(term, isFirst) {
+      if (term.coeff === 0) return isFirst ? `0` : ` + 0`;
+      const absCoeff = Math.abs(term.coeff);
+      const signStr = term.coeff < 0 ? (isFirst ? `-` : ` - `) : (isFirst ? `` : ` + `);
+      let core = ``;
+      if (term.power === 0) {
+        core = String(absCoeff);
+      } else {
+        const coeffPart = absCoeff === 1 ? `` : String(absCoeff);
+        const powPart = term.power === 2 ? `²` : ``;
+        core = coeffPart + term.variable + powPart;
+      }
+      return signStr + core;
+    }
+
+    function formatTermsListHTML(terms, allContextTerms) {
+      const ctx = allContextTerms || terms;
+      let html = ``;
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        const cat = getTermCategory(t, ctx);
+        const negClass = t.coeff < 0 ? ` term-chip--neg` : ``;
+        const text = formatSingleTermText(t, i === 0);
+        html += `<span class="term-chip term-chip--${cat}${negClass}">${escapeHtml(text)}</span>`;
+      }
+      return html;
+    }
+
+    function formatTermsPlainText(terms) {
+      if (!terms || terms.length === 0) return `0`;
+      let out = ``;
+      for (let i = 0; i < terms.length; i++) {
+        out += formatSingleTermText(terms[i], i === 0);
+      }
+      return out.trim();
+    }
+
+    function formatBracketQuestionHTML(q) {
+      const allTerms = [];
+      for (let i = 0; i < q.brackets.length; i++) {
+        for (let j = 0; j < q.brackets[i].terms.length; j++) {
+          allTerms.push(q.brackets[i].terms[j]);
+        }
+      }
+      let html = ``;
+      for (let i = 0; i < q.brackets.length; i++) {
+        const b = q.brackets[i];
+        let prefix = ``;
+        if (i === 0) {
+          if (b.explicitSign) {
+            prefix = b.sign < 0 ? `<span class="term-chip term-chip--neg">-</span>` : `<span class="term-chip">+</span>`;
+          }
+        } else {
+          prefix = b.sign < 0 ? `<span class="term-chip term-chip--neg"> - </span>` : `<span class="term-chip"> + </span>`;
+        }
+        html += prefix + `<span class="term-chip">(</span>` + formatTermsListHTML(b.terms, allTerms) + `<span class="term-chip">)</span>`;
+      }
+      return html;
+    }
+
+    function getExpandedTerms(q) {
+      const result = [];
+      for (let i = 0; i < q.brackets.length; i++) {
+        const b = q.brackets[i];
+        for (let j = 0; j < b.terms.length; j++) {
+          const t = b.terms[j];
+          result.push({
+            coeff: t.coeff * b.sign,
+            variable: t.variable,
+            power: t.power
+          });
+        }
+      }
+      return result;
+    }
+
+    function simplifyTermsMap(terms) {
+      const map = {};
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        const key = `${t.variable || ``}^${t.power}`;
+        if (!map[key]) {
+          map[key] = { coeff: 0, variable: t.variable || ``, power: t.power };
+        }
+        map[key].coeff += t.coeff;
+      }
+      const list = [];
+      const keys = Object.keys(map);
+      for (let i = 0; i < keys.length; i++) {
+        if (map[keys[i]].coeff !== 0) {
+          list.push(map[keys[i]]);
+        }
+      }
+      list.sort(function(a, b) {
+        if (b.power !== a.power) return b.power - a.power;
+        return (a.variable || ``).localeCompare(b.variable || ``);
+      });
+      return list;
+    }
+
+    function parsePolynomialInput(rawInput) {
+      if (!rawInput || typeof rawInput !== `string`) return null;
+      let s = rawInput.trim()
+        .replace(/²/g, `^2`)
+        .replace(/−/g, `-`)
+        .replace(/＋/g, `+`)
+        .replace(/\s+/g, ``)
+        .toLowerCase();
+      if (!s) return null;
+      if (s.indexOf(`(`) !== -1 || s.indexOf(`)`) !== -1) {
+        return { error: `請先拆掉括號，再輸入展開或化簡後的算式。` };
+      }
+      if (s === `0`) {
+        return { terms: [], explicitOneUsed: false };
+      }
+      if (s[0] !== `+` && s[0] !== `-`) {
+        s = `+` + s;
+      }
+      const termRegex = /([+-])(\d*)(?:([a-z])(?:\^(\d+))?)?/g;
+      const terms = [];
+      let matchedLen = 0;
+      let explicitOneUsed = false;
+      let match;
+      while ((match = termRegex.exec(s)) !== null) {
+        if (match[0] === ``) break;
+        const signStr = match[1];
+        const numStr = match[2];
+        const varStr = match[3] || ``;
+        const powStr = match[4];
+        if (!numStr && !varStr) return null;
+        if (powStr && !varStr) return null;
+        const sign = signStr === `-` ? -1 : 1;
+        const absCoeff = numStr === `` ? 1 : parseInt(numStr, 10);
+        if (isNaN(absCoeff)) return null;
+        if (varStr && numStr === `1`) explicitOneUsed = true;
+        const power = varStr ? (powStr ? parseInt(powStr, 10) : 1) : 0;
+        terms.push({ coeff: sign * absCoeff, variable: varStr, power: power });
+        matchedLen += match[0].length;
+      }
+      if (matchedLen !== s.length || terms.length === 0) return null;
+      return { terms: terms, explicitOneUsed: explicitOneUsed };
+    }
+
+    function areTermListsEquivalent(listA, listB) {
+      const simpA = simplifyTermsMap(listA);
+      const simpB = simplifyTermsMap(listB);
+      if (simpA.length !== simpB.length) return false;
+      for (let i = 0; i < simpA.length; i++) {
+        if (
+          simpA[i].coeff !== simpB[i].coeff ||
+          simpA[i].variable !== simpB[i].variable ||
+          simpA[i].power !== simpB[i].power
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function areExpandedTermsExact(userTerms, expectedTerms) {
+      if (userTerms.length !== expectedTerms.length) return false;
+      for (let i = 0; i < expectedTerms.length; i++) {
+        if (
+          userTerms[i].coeff !== expectedTerms[i].coeff ||
+          userTerms[i].variable !== expectedTerms[i].variable ||
+          userTerms[i].power !== expectedTerms[i].power
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, `&amp;`)
+        .replace(/</g, `&lt;`)
+        .replace(/>/g, `&gt;`)
+        .replace(/"/g, `&quot;`);
+    }
+
+    /* =========================================================
+       4. Algebra Tiles Renderer
+       ========================================================= */
+    function renderSingleTileHTML(term, cat, flipped) {
+      const isPos = term.coeff > 0;
+      const signPrefix = isPos ? `+` : `-`;
+      const coreLabel = term.power === 0 ? `1` : (term.power === 2 ? `${term.variable}²` : term.variable);
+      const label = signPrefix + coreLabel;
+      let colorClass = isPos ? `alg-tile--pos` : `alg-tile--neg`;
+      if (cat === `v2` && isPos) {
+        colorClass = `alg-tile--v2-pos`;
+      }
+      const flipClass = flipped ? ` alg-tile--flipped` : ``;
+      return `<span class="alg-tile alg-tile--${cat} ${colorClass}${flipClass}" title="${escapeHtml(label)}">${escapeHtml(label)}</span>`;
+    }
+
+    function renderTilesForTerms(terms, allContextTerms, pairZeroPairs, flippedMask) {
+      const ctx = allContextTerms || terms;
+      if (!pairZeroPairs) {
+        let html = `<div class="tile-row">`;
+        for (let i = 0; i < terms.length; i++) {
+          const t = terms[i];
+          const cat = getTermCategory(t, ctx);
+          const count = Math.abs(t.coeff);
+          const isFlipped = flippedMask ? Boolean(flippedMask[i]) : false;
+          for (let k = 0; k < count; k++) {
+            html += renderSingleTileHTML({ coeff: t.coeff > 0 ? 1 : -1, variable: t.variable, power: t.power }, cat, isFlipped);
+          }
+        }
+        html += `</div>`;
+        return html;
+      }
+
+      // Group by (variable, power) and pair positives & negatives
+      const buckets = {};
+      const order = [];
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        const key = `${t.variable || ``}^${t.power}`;
+        if (!buckets[key]) {
+          buckets[key] = {
+            variable: t.variable,
+            power: t.power,
+            cat: getTermCategory(t, ctx),
+            pos: 0,
+            neg: 0
+          };
+          order.push(key);
+        }
+        if (t.coeff > 0) buckets[key].pos += t.coeff;
+        if (t.coeff < 0) buckets[key].neg += Math.abs(t.coeff);
+      }
+
+      let html = ``;
+      for (let i = 0; i < order.length; i++) {
+        const b = buckets[order[i]];
+        const pairs = Math.min(b.pos, b.neg);
+        const remPos = b.pos - pairs;
+        const remNeg = b.neg - pairs;
+        const titleLabel = b.power === 0 ? `常數項` : (b.power === 2 ? `${b.variable}² 項` : `${b.variable} 項`);
+
+        html += `<div class="tile-group-box tile-group-box--${b.cat}">`;
+        html += `<div class="tile-group-label"><span>${escapeHtml(titleLabel)}</span><span>淨值：${escapeHtml(formatTermsPlainText([{ coeff: b.pos - b.neg, variable: b.variable, power: b.power }]))}</span></div>`;
+        html += `<div class="tile-row">`;
+        for (let p = 0; p < pairs; p++) {
+          html += `<span class="zero-pair" title="一正一負零對抵消 = 0">`;
+          html += renderSingleTileHTML({ coeff: 1, variable: b.variable, power: b.power }, b.cat, false);
+          html += renderSingleTileHTML({ coeff: -1, variable: b.variable, power: b.power }, b.cat, false);
+          html += `<span class="zero-pair-badge">=0</span></span>`;
+        }
+        for (let r = 0; r < remPos; r++) {
+          html += renderSingleTileHTML({ coeff: 1, variable: b.variable, power: b.power }, b.cat, false);
+        }
+        for (let r = 0; r < remNeg; r++) {
+          html += renderSingleTileHTML({ coeff: -1, variable: b.variable, power: b.power }, b.cat, false);
+        }
+        if (pairs > 0 && remPos === 0 && remNeg === 0) {
+          html += `<span class="field-hint" style="font-weight:700;">（全部相消為 0）</span>`;
+        }
+        html += `</div></div>`;
+      }
+      return html;
+    }
+
+    /* =========================================================
+       5. Section 1 Logic (25.11 Like Terms)
+       ========================================================= */
+    function getCurrentSec1Question() {
+      const part = SEC1_PARTS[appState.sec1PartIndex];
+      return part.questions[appState.sec1QIndex];
+    }
+
+    function selectSec1Part(partIdx) {
+      appState.sec1PartIndex = partIdx;
+      appState.sec1QIndex = 0;
+      appState.sec1ShowZeroPairs = false;
+      appState.sec1ShowGrouping = false;
+      renderSec1();
+      persistState();
+    }
+
+    function selectSec1Question(qIdx) {
+      appState.sec1QIndex = qIdx;
+      appState.sec1ShowZeroPairs = false;
+      appState.sec1ShowGrouping = false;
+      renderSec1();
+      persistState();
+    }
+
+    function toggleSec1ZeroPairs() {
+      appState.sec1ShowZeroPairs = !appState.sec1ShowZeroPairs;
+      renderSec1Workspace();
+    }
+
+    function toggleSec1Grouping() {
+      appState.sec1ShowGrouping = !appState.sec1ShowGrouping;
+      renderSec1Workspace();
+    }
+
+    function revealSec1AllSteps() {
+      const q = getCurrentSec1Question();
+      appState.sec1ShowZeroPairs = true;
+      appState.sec1ShowGrouping = true;
+      const ans = formatTermsPlainText(simplifyTermsMap(q.terms));
+      const inputEl = document.getElementById(`sec1-answer-input`);
+      if (inputEl) inputEl.value = ans;
+      renderSec1Workspace();
+      showFeedback(`sec1-feedback`, `info`, `課堂示範解答：將同類項合併後得到 ${ans}。`);
+    }
+
+    function checkSec1Answer() {
+      const q = getCurrentSec1Question();
+      const inputEl = document.getElementById(`sec1-answer-input`);
+      if (!inputEl) return;
+      const parsed = parsePolynomialInput(inputEl.value);
+      if (!parsed) {
+        showFeedback(`sec1-feedback`, `err`, `請輸入有效的代數式（例如 6a、4x² - 4x - 7 或 0）。`);
+        return;
+      }
+      if (parsed.error) {
+        showFeedback(`sec1-feedback`, `err`, parsed.error);
+        return;
+      }
+      const expected = simplifyTermsMap(q.terms);
+      const expectedText = formatTermsPlainText(expected);
+      if (areTermListsEquivalent(parsed.terms, expected)) {
+        appState.sec1Solved[q.id] = true;
+        let msg = `答對了！化簡結果為 ${expectedText}。`;
+        if (parsed.explicitOneUsed) {
+          msg += `（小提醒：數學書寫上係數 1 通常省略，例如 1x 寫作 x。）`;
+        } else if (formatTermsPlainText(parsed.terms) !== expectedText) {
+          msg += `（小提醒：習慣上可依降冪排列寫成 ${expectedText}。）`;
+        }
+        showFeedback(`sec1-feedback`, `ok`, msg);
+        renderSec1QuestionStrip();
+        updateProgressUI();
+        persistState();
+      } else {
+        const diag = diagnosePolynomialMismatch(parsed.terms, expected);
+        showFeedback(`sec1-feedback`, `err`, `還差一點！${diag} 建議先點擊上方「展開／隱藏同類項分組」再核對係數。`);
+      }
+    }
+
+    function diagnosePolynomialMismatch(userTerms, expectedTerms) {
+      const uMap = {};
+      const eMap = {};
+      const simpU = simplifyTermsMap(userTerms);
+      for (let i = 0; i < simpU.length; i++) {
+        uMap[`${simpU[i].variable || ``}^${simpU[i].power}`] = simpU[i];
+      }
+      for (let i = 0; i < expectedTerms.length; i++) {
+        eMap[`${expectedTerms[i].variable || ``}^${expectedTerms[i].power}`] = expectedTerms[i];
+      }
+      const allKeys = Object.keys(Object.assign({}, uMap, eMap));
+      for (let i = 0; i < allKeys.length; i++) {
+        const k = allKeys[i];
+        const uVal = uMap[k] ? uMap[k].coeff : 0;
+        const eVal = eMap[k] ? eMap[k].coeff : 0;
+        if (uVal !== eVal) {
+          const ref = eMap[k] || uMap[k];
+          const termName = ref.power === 0 ? `常數項` : (ref.power === 2 ? `${ref.variable}² 項` : `${ref.variable} 項`);
+          if (uVal === -eVal && uVal !== 0) {
+            return `${termName}的正負號相反了（檢查加減號方向）。`;
+          }
+          return `請再檢查「${termName}」的係數加減。`;
+        }
+      }
+      return `請再核對各項正負號與係數。`;
+    }
+
+    function renderSec1() {
+      for (let i = 0; i < SEC1_PARTS.length; i++) {
+        const tabBtn = document.getElementById(`part-tab-${i}`);
+        if (tabBtn) {
+          if (i === appState.sec1PartIndex) {
+            tabBtn.classList.add(`is-active`);
+            tabBtn.setAttribute(`aria-selected`, `true`);
+          } else {
+            tabBtn.classList.remove(`is-active`);
+            tabBtn.setAttribute(`aria-selected`, `false`);
+          }
+        }
+      }
+      renderSec1QuestionStrip();
+      const inputEl = document.getElementById(`sec1-answer-input`);
+      if (inputEl) inputEl.value = ``;
+      clearFeedback(`sec1-feedback`);
+      renderSec1Workspace();
+    }
+
+    function renderSec1QuestionStrip() {
+      const strip = document.getElementById(`sec1-question-strip`);
+      if (!strip) return;
+      const part = SEC1_PARTS[appState.sec1PartIndex];
+      let html = `<span class="field-hint" style="font-weight:700;">選擇題目：</span>`;
+      for (let i = 0; i < part.questions.length; i++) {
+        const q = part.questions[i];
+        const isCurrent = i === appState.sec1QIndex;
+        const isSolved = Boolean(appState.sec1Solved[q.id]);
+        const cls = `q-btn${isCurrent ? ` is-current` : ``}${isSolved ? ` is-solved` : ``}`;
+        const mark = isSolved ? ` <span class="q-done-mark" aria-label="已完成">✓</span>` : ``;
+        html += `<button type="button" class="${cls}" onclick="selectSec1Question(${i})">${escapeHtml(q.label)}${mark}</button>`;
+      }
+      strip.innerHTML = html;
+    }
+
+    function renderSec1Workspace() {
+      const q = getCurrentSec1Question();
+      const refEl = document.getElementById(`sec1-ref-label`);
+      const exprEl = document.getElementById(`sec1-expr-display`);
+      const stageEl = document.getElementById(`sec1-tile-stage`);
+      const pairBtn = document.getElementById(`sec1-pair-btn`);
+      const groupBtn = document.getElementById(`sec1-group-btn`);
+      const groupArea = document.getElementById(`sec1-grouping-area`);
+      const groupGrid = document.getElementById(`sec1-grouping-grid`);
+      const groupPlaceholder = document.getElementById(`sec1-grouping-placeholder`);
+
+      if (refEl) refEl.textContent = q.ref;
+      if (exprEl) exprEl.innerHTML = formatTermsListHTML(q.terms, q.terms);
+      if (stageEl) stageEl.innerHTML = renderTilesForTerms(q.terms, q.terms, appState.sec1ShowZeroPairs, null);
+
+      if (pairBtn) {
+        pairBtn.textContent = appState.sec1ShowZeroPairs ? `恢復展開排列` : `配對零對相消 (= 0)`;
+        if (appState.sec1ShowZeroPairs) pairBtn.classList.add(`is-active`);
+        else pairBtn.classList.remove(`is-active`);
+      }
+
+      if (groupBtn) {
+        if (appState.sec1ShowGrouping) groupBtn.classList.add(`is-active`);
+        else groupBtn.classList.remove(`is-active`);
+      }
+
+      if (groupArea && groupPlaceholder && groupGrid) {
+        if (appState.sec1ShowGrouping) {
+          groupArea.style.display = `block`;
+          groupPlaceholder.style.display = `none`;
+          groupGrid.innerHTML = renderSec1GroupingCards(q.terms);
+        } else {
+          groupArea.style.display = `none`;
+          groupPlaceholder.style.display = `block`;
+        }
+      }
+
+      const quickKeysEl = document.getElementById(`sec1-quick-keys`);
+      if (quickKeysEl) {
+        const seenVars = [];
+        let hasQuad = false;
+        for (let i = 0; i < q.terms.length; i++) {
+          const t = q.terms[i];
+          if (t.power === 2) hasQuad = true;
+          if (t.variable && seenVars.indexOf(t.variable) === -1) {
+            seenVars.push(t.variable);
+          }
+        }
+        let kHtml = `<span class="field-hint">快捷插入：</span>`;
+        if (hasQuad) {
+          kHtml += `<button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', 'x²')">x²</button>`;
+        }
+        for (let i = 0; i < seenVars.length; i++) {
+          const v = seenVars[i];
+          kHtml += `<button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', '${escapeHtml(v)}')">${escapeHtml(v)}</button>`;
+        }
+        kHtml += `<button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', ' + ')">+</button>`;
+        kHtml += `<button type="button" class="key-btn" onclick="insertSymbol('sec1-answer-input', ' - ')">-</button>`;
+        quickKeysEl.innerHTML = kHtml;
+      }
+    }
+
+    function renderSec1GroupingCards(terms) {
+      const groups = {};
+      const order = [];
+      for (let i = 0; i < terms.length; i++) {
+        const t = terms[i];
+        const key = `${t.variable || ``}^${t.power}`;
+        if (!groups[key]) {
+          groups[key] = {
+            variable: t.variable,
+            power: t.power,
+            cat: getTermCategory(t, terms),
+            items: []
+          };
+          order.push(key);
+        }
+        groups[key].items.push(t);
+      }
+
+      let html = ``;
+      for (let i = 0; i < order.length; i++) {
+        const g = groups[order[i]];
+        const sumCoeff = g.items.reduce(function(acc, item) { return acc + item.coeff; }, 0);
+        const title = g.power === 0 ? `常數項` : (g.power === 2 ? `${g.variable}² 項（二次項）` : `${g.variable} 項（一次項）`);
+        const expr = formatTermsPlainText(g.items);
+        const merged = formatTermsPlainText([{ coeff: sumCoeff, variable: g.variable, power: g.power }]);
+        html += `<div class="tile-group-box tile-group-box--${g.cat}">`;
+        html += `<div class="tile-group-label"><span>${escapeHtml(title)}</span><span>共 ${g.items.length} 項</span></div>`;
+        html += `<div style="font-family:var(--font-math); font-weight:800; font-size:1.0625rem;">(${escapeHtml(expr)}) = <strong>${escapeHtml(merged)}</strong></div>`;
+        html += `</div>`;
+      }
+      return html;
+    }
+
+    /* =========================================================
+       6. Section 2 & Section 3 Shared Bracket Workspace Engine
+       ========================================================= */
+    function renderBracketWorkspace(cfg) {
+      const q = cfg.question;
+      const openedArr = cfg.openedArr;
+      const flippedArr = cfg.flippedArr;
+      const isMerged = cfg.isMerged;
+
+      const refEl = document.getElementById(cfg.refId);
+      const exprEl = document.getElementById(cfg.exprId);
+      const stageEl = document.getElementById(cfg.stageId);
+      const statusEl = document.getElementById(cfg.statusId);
+      const mergedEl = document.getElementById(cfg.mergedTilesId);
+      const mergeBtn = document.getElementById(cfg.mergeBtnId);
+
+      if (refEl) refEl.textContent = q.ref;
+      if (exprEl) exprEl.innerHTML = formatBracketQuestionHTML(q);
+
+      const allTerms = [];
+      for (let i = 0; i < q.brackets.length; i++) {
+        for (let j = 0; j < q.brackets[i].terms.length; j++) {
+          allTerms.push(q.brackets[i].terms[j]);
+        }
+      }
+
+      const allOpened = openedArr.length === q.brackets.length && openedArr.every(Boolean);
+      if (statusEl) {
+        statusEl.textContent = allOpened ? `已完成全部拆括號` : `請點擊下方括號的拆括號按鈕`;
+      }
+
+      if (stageEl) {
+        let html = ``;
+        for (let i = 0; i < q.brackets.length; i++) {
+          const b = q.brackets[i];
+          const isOpen = Boolean(openedArr[i]);
+          const isNeg = b.sign < 0;
+          const cardCls = `bracket-card ${isNeg ? `bracket-card--neg` : `bracket-card--pos`}${isOpen ? ` bracket-card--done` : ``}`;
+          const signTitle = isNeg ? `負號括號 - ( … )` : (i === 0 && !b.explicitSign ? `首組括號 ( … )（等同正號）` : `正號括號 + ( … )`);
+
+          const displayTerms = isOpen
+            ? b.terms.map(function(t) { return { coeff: t.coeff * b.sign, variable: t.variable, power: t.power }; })
+            : b.terms;
+          const wasFlipped = Boolean(flippedArr[i]);
+          const flipMask = wasFlipped ? displayTerms.map(function() { return true; }) : null;
+
+          html += `<div class="${cardCls}">`;
+          html += `<div class="bracket-sign-header"><span>${escapeHtml(signTitle)}</span>`;
+          html += isOpen
+            ? `<span class="status-tag">${isNeg ? `已翻牌變號 ✓` : `已保留原號 ✓`}</span>`
+            : `<span class="field-hint">尚未拆開</span>`;
+          html += `</div>`;
+
+          const bracketInnerText = isOpen
+            ? formatTermsPlainText(displayTerms)
+            : `${isNeg ? `-` : (b.explicitSign ? `+` : ``)}(${formatTermsPlainText(b.terms)})`;
+          html += `<div class="bracket-expr-line">${escapeHtml(bracketInnerText)}</div>`;
+
+          html += `<div class="tile-row" style="min-height:64px;">`;
+          for (let j = 0; j < displayTerms.length; j++) {
+            const t = displayTerms[j];
+            const cat = getTermCategory(t, allTerms);
+            const cnt = Math.abs(t.coeff);
+            const flipNow = flipMask ? flipMask[j] : false;
+            for (let c = 0; c < cnt; c++) {
+              html += renderSingleTileHTML({ coeff: t.coeff > 0 ? 1 : -1, variable: t.variable, power: t.power }, cat, flipNow);
+            }
+          }
+          html += `</div>`;
+
+          if (!isOpen) {
+            if (isNeg) {
+              html += `<button type="button" class="button button--neg" onclick="${cfg.openFnName}(${i})">負號拆括號 -(…)：全部翻牌變號</button>`;
+            } else {
+              html += `<button type="button" class="button button--pos" onclick="${cfg.openFnName}(${i})">正號拆括號 +(…)：符號不變</button>`;
+            }
+          }
+          html += `</div>`;
+        }
+        stageEl.innerHTML = html;
+      }
+
+      // Render merged tile stage
+      const expandedTerms = getExpandedTerms(q);
+      if (mergedEl) {
+        if (!allOpened) {
+          mergedEl.innerHTML = `<span class="field-hint">請先完成步驟 1 的所有拆括號動作，即可在此進行同類項分組與零對抵消。</span>`;
+        } else {
+          mergedEl.innerHTML = renderTilesForTerms(expandedTerms, allTerms, isMerged, null);
+        }
+      }
+      if (mergeBtn) {
+        mergeBtn.disabled = !allOpened;
+        mergeBtn.textContent = isMerged ? `檢視未合併展開磚` : `合併同類項並消除零對`;
+        if (isMerged && allOpened) mergeBtn.classList.add(`is-active`);
+        else mergeBtn.classList.remove(`is-active`);
+      }
+    }
+
+    function diagnoseBracketStep1Error(q, userTerms, expectedExpanded) {
+      for (let i = 0; i < q.brackets.length; i++) {
+        const b = q.brackets[i];
+        if (b.sign < 0 && b.terms.length >= 2) {
+          // Check if student forgot to flip second or later terms inside negative bracket
+          let offset = 0;
+          for (let prev = 0; prev < i; prev++) offset += q.brackets[prev].terms.length;
+          for (let j = 1; j < b.terms.length; j++) {
+            const idx = offset + j;
+            if (userTerms[idx] && expectedExpanded[idx]) {
+              if (userTerms[idx].coeff === -expectedExpanded[idx].coeff) {
+                const origTxt = formatSingleTermText(b.terms[j], false).trim();
+                const flippedTxt = formatSingleTermText(expectedExpanded[idx], false).trim();
+                return `注意！負號括號內的「${origTxt}」遇到前面的負號時，記得要翻牌變號成為「${flippedTxt}」。`;
+              }
+            }
+          }
+        }
+      }
+      return `請逐一核對每個括號拆開後的各項正負號是否正確（先保留原本順序，暫不合併）。`;
+    }
+
+    /* =========================================================
+       7. Section 2 Controllers (5 Guided Questions)
+       ========================================================= */
+    function selectSec2Question(idx) {
+      appState.sec2QIndex = idx;
+      const q = SEC2_QUESTIONS[idx];
+      appState.sec2OpenedBrackets = q.brackets.map(function() { return false; });
+      appState.sec2FlippedIndices = q.brackets.map(function() { return false; });
+      appState.sec2Merged = false;
+      const s1 = document.getElementById(`sec2-step1-input`);
+      const s2 = document.getElementById(`sec2-final-input`);
+      if (s1) s1.value = ``;
+      if (s2) s2.value = ``;
+      clearFeedback(`sec2-step1-feedback`);
+      clearFeedback(`sec2-final-feedback`);
+      renderSec2();
+      persistState();
+    }
+
+    function openSec2Bracket(bIdx) {
+      const q = SEC2_QUESTIONS[appState.sec2QIndex];
+      appState.sec2OpenedBrackets[bIdx] = true;
+      appState.sec2FlippedIndices[bIdx] = q.brackets[bIdx].sign < 0;
+      renderSec2Workspace();
+    }
+
+    function resetSec2Current() {
+      selectSec2Question(appState.sec2QIndex);
+    }
+
+    function toggleSec2Merge() {
+      appState.sec2Merged = !appState.sec2Merged;
+      renderSec2Workspace();
+    }
+
+    function revealSec2AllSteps() {
+      const q = SEC2_QUESTIONS[appState.sec2QIndex];
+      appState.sec2OpenedBrackets = q.brackets.map(function() { return true; });
+      appState.sec2FlippedIndices = q.brackets.map(function(b) { return b.sign < 0; });
+      appState.sec2Merged = true;
+      const expanded = getExpandedTerms(q);
+      const finalAns = formatTermsPlainText(simplifyTermsMap(expanded));
+      const s1 = document.getElementById(`sec2-step1-input`);
+      const s2 = document.getElementById(`sec2-final-input`);
+      if (s1) s1.value = formatTermsPlainText(expanded);
+      if (s2) s2.value = finalAns;
+      renderSec2Workspace();
+      showFeedback(`sec2-step1-feedback`, `info`, `課堂示範拆括號：${formatTermsPlainText(expanded)}`);
+      showFeedback(`sec2-final-feedback`, `info`, `課堂示範最終結果：${finalAns}`);
+    }
+
+    function checkSec2Step1() {
+      const q = SEC2_QUESTIONS[appState.sec2QIndex];
+      const inputEl = document.getElementById(`sec2-step1-input`);
+      if (!inputEl) return;
+      const parsed = parsePolynomialInput(inputEl.value);
+      if (!parsed) {
+        showFeedback(`sec2-step1-feedback`, `err`, `請輸入拆括號後的展開算式。`);
+        return;
+      }
+      if (parsed.error) {
+        showFeedback(`sec2-step1-feedback`, `err`, parsed.error);
+        return;
+      }
+      const expectedExpanded = getExpandedTerms(q);
+      if (areExpandedTermsExact(parsed.terms, expectedExpanded)) {
+        showFeedback(`sec2-step1-feedback`, `ok`, `拆括號完全正確！現在請進行步驟 2 合併同類項。`);
+        appState.sec2OpenedBrackets = q.brackets.map(function() { return true; });
+        renderSec2Workspace();
+      } else if (areTermListsEquivalent(parsed.terms, expectedExpanded)) {
+        showFeedback(`sec2-step1-feedback`, `ok`, `展開等價正確！接著請完成步驟 2 合併同類項。`);
+      } else {
+        const msg = diagnoseBracketStep1Error(q, parsed.terms, expectedExpanded);
+        showFeedback(`sec2-step1-feedback`, `err`, msg);
+      }
+    }
+
+    function checkSec2Final() {
+      const q = SEC2_QUESTIONS[appState.sec2QIndex];
+      const inputEl = document.getElementById(`sec2-final-input`);
+      if (!inputEl) return;
+      const parsed = parsePolynomialInput(inputEl.value);
+      if (!parsed) {
+        showFeedback(`sec2-final-feedback`, `err`, `請輸入化簡後的最終答案。`);
+        return;
+      }
+      if (parsed.error) {
+        showFeedback(`sec2-final-feedback`, `err`, parsed.error);
+        return;
+      }
+      const expectedFinal = simplifyTermsMap(getExpandedTerms(q));
+      const expectedText = formatTermsPlainText(expectedFinal);
+      if (areTermListsEquivalent(parsed.terms, expectedFinal)) {
+        appState.sec2Solved[q.id] = true;
+        let msg = `答對了！最終簡化結果為 ${expectedText}。`;
+        if (parsed.explicitOneUsed) {
+          msg += `（提示：係數為 1 時可簡寫，例如 1x² 寫成 x²。）`;
+        }
+        showFeedback(`sec2-final-feedback`, `ok`, msg);
+        renderSec2QuestionStrip();
+        updateProgressUI();
+        persistState();
+      } else {
+        const diag = diagnosePolynomialMismatch(parsed.terms, expectedFinal);
+        showFeedback(`sec2-final-feedback`, `err`, `答案未正確！${diag}`);
+      }
+    }
+
+    function renderSec2QuestionStrip() {
+      const strip = document.getElementById(`sec2-question-strip`);
+      if (!strip) return;
+      let html = `<span class="field-hint" style="font-weight:700;">固定階段題目：</span>`;
+      for (let i = 0; i < SEC2_QUESTIONS.length; i++) {
+        const q = SEC2_QUESTIONS[i];
+        const isCurrent = i === appState.sec2QIndex;
+        const isSolved = Boolean(appState.sec2Solved[q.id]);
+        const cls = `q-btn${isCurrent ? ` is-current` : ``}${isSolved ? ` is-solved` : ``}`;
+        const mark = isSolved ? ` <span class="q-done-mark" aria-label="已完成">✓</span>` : ``;
+        html += `<button type="button" class="${cls}" onclick="selectSec2Question(${i})">${escapeHtml(q.label)}${mark}</button>`;
+      }
+      strip.innerHTML = html;
+    }
+
+    function renderSec2Workspace() {
+      const q = SEC2_QUESTIONS[appState.sec2QIndex];
+      renderBracketWorkspace({
+        question: q,
+        openedArr: appState.sec2OpenedBrackets,
+        flippedArr: appState.sec2FlippedIndices,
+        isMerged: appState.sec2Merged,
+        refId: `sec2-ref-label`,
+        exprId: `sec2-expr-display`,
+        stageId: `sec2-bracket-stage`,
+        statusId: `sec2-bracket-status`,
+        mergedTilesId: `sec2-merged-tiles`,
+        mergeBtnId: `sec2-merge-btn`,
+        openFnName: `openSec2Bracket`
+      });
+    }
+
+    function renderSec2() {
+      renderSec2QuestionStrip();
+      renderSec2Workspace();
+    }
+
+    /* =========================================================
+       8. Section 3: Random Question Generator
+       ========================================================= */
+    function randNonZeroCoeff(minAbs, maxAbs) {
+      const val = Math.floor(Math.random() * (maxAbs - minAbs + 1)) + minAbs;
+      return Math.random() < 0.5 ? -val : val;
+    }
+
+    function buildRandomBracketTerms(level) {
+      const terms = [];
+      if (level === `quad` || level === `full`) {
+        terms.push({ coeff: randNonZeroCoeff(1, 3), variable: `x`, power: 2 });
+      }
+      terms.push({ coeff: randNonZeroCoeff(1, 5), variable: `x`, power: 1 });
+      if (level === `linear` || level === `full`) {
+        terms.push({ coeff: randNonZeroCoeff(1, 5), variable: ``, power: 0 });
+      }
+      return terms;
+    }
+
+    function generateRandomQuestion(initialSkipIncrement) {
+      const modeSel = document.getElementById(`gen-mode-select`);
+      const levelSel = document.getElementById(`gen-level-select`);
+      const mode = modeSel ? modeSel.value : `mixed`;
+      const level = levelSel ? levelSel.value : `quad`;
+
+      if (!initialSkipIncrement) {
+        appState.sec3Counter += 1;
+      }
+
+      const brackets = [];
+      if (mode === `pos`) {
+        brackets.push({ sign: 1, explicitSign: true, terms: buildRandomBracketTerms(level) });
+      } else if (mode === `neg`) {
+        brackets.push({ sign: -1, explicitSign: true, terms: buildRandomBracketTerms(level) });
+      } else {
+        const secondSign = Math.random() < 0.65 ? -1 : 1;
+        brackets.push({ sign: 1, explicitSign: false, terms: buildRandomBracketTerms(level) });
+        brackets.push({ sign: secondSign, explicitSign: true, terms: buildRandomBracketTerms(level) });
+      }
+
+      appState.sec3Question = {
+        id: `rand-${appState.sec3Counter}`,
+        ref: `隨機練習題 #${appState.sec3Counter}`,
+        brackets: brackets,
+        countedSolved: false
+      };
+      appState.sec3OpenedBrackets = brackets.map(function() { return false; });
+      appState.sec3FlippedIndices = brackets.map(function() { return false; });
+      appState.sec3Merged = false;
+
+      const s1 = document.getElementById(`sec3-step1-input`);
+      const s2 = document.getElementById(`sec3-final-input`);
+      if (s1) s1.value = ``;
+      if (s2) s2.value = ``;
+      clearFeedback(`sec3-step1-feedback`);
+      clearFeedback(`sec3-final-feedback`);
+      renderSec3Workspace();
+    }
+
+    function openSec3Bracket(bIdx) {
+      if (!appState.sec3Question) return;
+      appState.sec3OpenedBrackets[bIdx] = true;
+      appState.sec3FlippedIndices[bIdx] = appState.sec3Question.brackets[bIdx].sign < 0;
+      renderSec3Workspace();
+    }
+
+    function toggleSec3Merge() {
+      appState.sec3Merged = !appState.sec3Merged;
+      renderSec3Workspace();
+    }
+
+    function revealSec3AllSteps() {
+      const q = appState.sec3Question;
+      if (!q) return;
+      appState.sec3OpenedBrackets = q.brackets.map(function() { return true; });
+      appState.sec3FlippedIndices = q.brackets.map(function(b) { return b.sign < 0; });
+      appState.sec3Merged = true;
+      const expanded = getExpandedTerms(q);
+      const finalAns = formatTermsPlainText(simplifyTermsMap(expanded));
+      const s1 = document.getElementById(`sec3-step1-input`);
+      const s2 = document.getElementById(`sec3-final-input`);
+      if (s1) s1.value = formatTermsPlainText(expanded);
+      if (s2) s2.value = finalAns;
+      renderSec3Workspace();
+      showFeedback(`sec3-step1-feedback`, `info`, `參考展開式：${formatTermsPlainText(expanded)}`);
+      showFeedback(`sec3-final-feedback`, `info`, `參考最簡答案：${finalAns}`);
+    }
+
+    function checkSec3Step1() {
+      const q = appState.sec3Question;
+      const inputEl = document.getElementById(`sec3-step1-input`);
+      if (!q || !inputEl) return;
+      const parsed = parsePolynomialInput(inputEl.value);
+      if (!parsed) {
+        showFeedback(`sec3-step1-feedback`, `err`, `請輸入拆括號後的算式。`);
+        return;
+      }
+      if (parsed.error) {
+        showFeedback(`sec3-step1-feedback`, `err`, parsed.error);
+        return;
+      }
+      const expectedExpanded = getExpandedTerms(q);
+      if (areExpandedTermsExact(parsed.terms, expectedExpanded) || areTermListsEquivalent(parsed.terms, expectedExpanded)) {
+        showFeedback(`sec3-step1-feedback`, `ok`, `拆括號正確！接著進行步驟 2 合併同類項。`);
+        appState.sec3OpenedBrackets = q.brackets.map(function() { return true; });
+        renderSec3Workspace();
+      } else {
+        const msg = diagnoseBracketStep1Error(q, parsed.terms, expectedExpanded);
+        showFeedback(`sec3-step1-feedback`, `err`, msg);
+      }
+    }
+
+    function checkSec3Final() {
+      const q = appState.sec3Question;
+      const inputEl = document.getElementById(`sec3-final-input`);
+      if (!q || !inputEl) return;
+      const parsed = parsePolynomialInput(inputEl.value);
+      if (!parsed) {
+        showFeedback(`sec3-final-feedback`, `err`, `請輸入化簡後的最終答案。`);
+        return;
+      }
+      if (parsed.error) {
+        showFeedback(`sec3-final-feedback`, `err`, parsed.error);
+        return;
+      }
+      const expectedFinal = simplifyTermsMap(getExpandedTerms(q));
+      const expectedText = formatTermsPlainText(expectedFinal);
+      if (areTermListsEquivalent(parsed.terms, expectedFinal)) {
+        if (!q.countedSolved) {
+          q.countedSolved = true;
+          appState.sec3SolvedCount += 1;
+          updateProgressUI();
+          persistState();
+        }
+        showFeedback(`sec3-final-feedback`, `ok`, `完全正確！化簡結果為 ${expectedText}。可點擊「產生新隨機題目」繼續挑戰！`);
+      } else {
+        const diag = diagnosePolynomialMismatch(parsed.terms, expectedFinal);
+        showFeedback(`sec3-final-feedback`, `err`, `尚未正確！${diag}`);
+      }
+    }
+
+    function renderSec3Workspace() {
+      if (!appState.sec3Question) return;
+      renderBracketWorkspace({
+        question: appState.sec3Question,
+        openedArr: appState.sec3OpenedBrackets,
+        flippedArr: appState.sec3FlippedIndices,
+        isMerged: appState.sec3Merged,
+        refId: `sec3-ref-label`,
+        exprId: `sec3-expr-display`,
+        stageId: `sec3-bracket-stage`,
+        statusId: `sec3-bracket-status`,
+        mergedTilesId: `sec3-merged-tiles`,
+        mergeBtnId: `sec3-merge-btn`,
+        openFnName: `openSec3Bracket`
+      });
+    }
+
+    /* =========================================================
+       9. Shared UI Helpers & State Persistence
+       ========================================================= */
+    function insertSymbol(inputId, sym) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      const start = el.selectionStart || el.value.length;
+      const end = el.selectionEnd || el.value.length;
+      const val = el.value;
+      el.value = val.slice(0, start) + sym + val.slice(end);
+      el.focus();
+      const nextPos = start + sym.length;
+      el.setSelectionRange(nextPos, nextPos);
+    }
+
+    function showFeedback(elId, type, msg) {
+      const box = document.getElementById(elId);
+      if (!box) return;
+      box.className = `feedback-box is-visible feedback-box--${type}`;
+      box.textContent = msg;
+    }
+
+    function clearFeedback(elId) {
+      const box = document.getElementById(elId);
+      if (!box) return;
+      box.className = `feedback-box`;
+      box.textContent = ``;
+    }
+
+    function updateProgressUI() {
+      let s1Count = 0;
+      for (let p = 0; p < SEC1_PARTS.length; p++) {
+        for (let q = 0; q < SEC1_PARTS[p].questions.length; q++) {
+          if (appState.sec1Solved[SEC1_PARTS[p].questions[q].id]) s1Count += 1;
+        }
+      }
+      let s2Count = 0;
+      for (let q = 0; q < SEC2_QUESTIONS.length; q++) {
+        if (appState.sec2Solved[SEC2_QUESTIONS[q].id]) s2Count += 1;
+      }
+      const totalSolved = s1Count + s2Count;
+      const totalItems = 17;
+      const pct = Math.round((totalSolved / totalItems) * 100);
+
+      const overallText = document.getElementById(`overall-progress-text`);
+      const overallBar = document.getElementById(`overall-progress-bar`);
+      const sec1Tag = document.getElementById(`sec1-progress-tag`);
+      const sec2Tag = document.getElementById(`sec2-progress-tag`);
+      const randText = document.getElementById(`random-count-text`);
+      const streakTag = document.getElementById(`sec3-streak-tag`);
+
+      if (overallText) overallText.textContent = `${totalSolved} / ${totalItems} 題`;
+      if (overallBar) overallBar.style.width = `${pct}%`;
+      if (sec1Tag) sec1Tag.textContent = `已完成 ${s1Count} / 12 題`;
+      if (sec2Tag) sec2Tag.textContent = `已完成 ${s2Count} / 5 題`;
+      if (randText) randText.textContent = `隨機練習已完成：${appState.sec3SolvedCount} 題`;
+      if (streakTag) streakTag.textContent = `本次隨機答對：${appState.sec3SolvedCount} 題`;
+    }
+
+    function handleResetProgress(btn) {
+      if (!btn) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `再次點擊確認重置`;
+        setTimeout(function() {
+          if (btn.dataset.armed === `true`) {
+            btn.dataset.armed = `false`;
+            btn.textContent = `重置進度`;
+          }
+        }, 4000);
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.textContent = `重置進度`;
+      appState.sec1Solved = {};
+      appState.sec2Solved = {};
+      appState.sec3SolvedCount = 0;
+      renderSec1();
+      selectSec2Question(0);
+      updateProgressUI();
+      persistState();
+    }
+
+    async function persistState() {
+      if (!window.notebookAppApi || typeof window.notebookAppApi.setAppState !== `function`) return;
+      try {
+        await window.notebookAppApi.setAppState({
+          sec1PartIndex: appState.sec1PartIndex,
+          sec1QIndex: appState.sec1QIndex,
+          sec1Solved: appState.sec1Solved,
+          sec2QIndex: appState.sec2QIndex,
+          sec2Solved: appState.sec2Solved,
+          sec3SolvedCount: appState.sec3SolvedCount
+        });
+      } catch (e) {
+        // Ignore persistence errors in non-hosted environments
+      }
+    }
+
+    async function initApp() {
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && typeof saved === `object`) {
+            if (typeof saved.sec1PartIndex === `number` && SEC1_PARTS[saved.sec1PartIndex]) {
+              appState.sec1PartIndex = saved.sec1PartIndex;
+            }
+            if (typeof saved.sec1QIndex === `number` && SEC1_PARTS[appState.sec1PartIndex].questions[saved.sec1QIndex]) {
+              appState.sec1QIndex = saved.sec1QIndex;
+            }
+            if (saved.sec1Solved && typeof saved.sec1Solved === `object`) {
+              appState.sec1Solved = saved.sec1Solved;
+            }
+            if (typeof saved.sec2QIndex === `number` && SEC2_QUESTIONS[saved.sec2QIndex]) {
+              appState.sec2QIndex = saved.sec2QIndex;
+            }
+            if (saved.sec2Solved && typeof saved.sec2Solved === `object`) {
+              appState.sec2Solved = saved.sec2Solved;
+            }
+            if (typeof saved.sec3SolvedCount === `number`) {
+              appState.sec3SolvedCount = saved.sec3SolvedCount;
+            }
+          }
+        } catch (e) {
+          // Proceed with default empty state
+        }
+      }
+
+      renderSec1();
+      selectSec2Question(appState.sec2QIndex);
+      generateRandomQuestion(true);
+      updateProgressUI();
+
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
